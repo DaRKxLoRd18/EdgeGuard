@@ -1,0 +1,61 @@
+EdgeGuard-Plus/
+├── edge_device/                    # 📦 Edge AI & video capture logic
+│   ├── capture.py                  # Capture webcam/video
+│   ├── detect.py                   # CNN+LSTM anomaly detection
+│   ├── dvr_buffer.py               # Mini-DVR logic (pre/post event video)
+│   ├── encrypt.py                  # AES-256 encryption
+│   └── config.json                 # Edge-specific settings (e.g., zone map)
+│
+├── models/                         # 🧠 ML model training & exports
+│   ├── train_model.ipynb           # Jupyter notebook for training
+│   ├── model_export.py             # Convert to TFLite/ONNX
+│   ├── utils.py                    # Preprocessing functions
+│   ├── cnn_lstm_model.py           # Core model architecture
+│   └── saved_model/                # Exported TFLite/ONNX models
+│
+├── backend_api/                    # ☁️ FastAPI backend
+│   ├── main.py                     # Main FastAPI server
+│   ├── models.py                   # DB models/schema
+│   ├── routes.py                   # API routes
+│   ├── database.py                 # SQLite/MongoDB connection
+│   ├── mqtt_handler.py             # Handles MQTT message ingestion
+│   ├── websocket.py                # WebSocket server for dashboard
+│   └── utils/                      # Token validation, encryption, etc.
+│
+├── dashboard_ui/                   # 💻 React frontend
+│   ├── public/
+│   └── src/
+│       ├── components/             # Alert cards, video replay, zone editor
+│       ├── pages/                  # Main pages
+│       ├── services/              # API + WebSocket interaction
+│       ├── App.js
+│       └── index.js
+│
+├── federated_learning/            # 🔁 Flower or PySyft setup
+│   ├── client.py                   # Simulated edge client
+│   ├── server.py                   # Federated server logic
+│   └── dataset_splitter.py         # Simulate multiple clients
+│
+├── data/                          # 📁 Sample videos, datasets
+│   ├── raw/                        # Raw UCSD/Avenue dataset
+│   ├── processed/                  # Extracted frames
+│   └── clips/                      # DVR replay clips (encrypted/plain)
+│
+├── deployment/                   # 🚀 Docker + CI/CD
+│   ├── docker-compose.yml         # Compose file for full app
+│   ├── edge.Dockerfile            # Dockerfile for edge device
+│   ├── backend.Dockerfile         # Dockerfile for API
+│   ├── frontend.Dockerfile        # Dockerfile for React app
+│   ├── nginx.conf                 # Optional reverse proxy setup
+│   └── github-actions.yml         # CI/CD pipeline config
+│
+├── docs/                         # 📚 Architecture, API docs, blog post
+│   ├── architecture.md
+│   ├── demo_flow.md
+│   ├── team_tasks.md
+│   └── images/                    # Diagrams/screenshots
+│
+├── README.md                     # 📘 Full project overview
+├── requirements.txt              # Python dependencies
+├── package.json                  # React dependencies
+└── LICENSE
