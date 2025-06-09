@@ -1,4 +1,3 @@
-# Placeholder for dvr.py
 import cv2
 import os
 from collections import deque
@@ -14,26 +13,15 @@ class DVRBuffer:
     def add_frame(self, frame):
         self.buffer.append(frame.copy())
 
-    def save_clip(self, post_frames=150):  # 5s after = 150 frames at 30fps
+    def save_clip_start(self):
         filename = os.path.join(self.output_dir, f"clip_{int(time.time())}.avi")
         if not self.buffer:
-            return None
+            return None, None
 
         height, width, _ = self.buffer[0].shape
         out = cv2.VideoWriter(filename, cv2.VideoWriter_fourcc(*'XVID'), self.fps, (width, height))
 
-        # Write pre-anomaly frames
         for frame in self.buffer:
             out.write(frame)
 
-        # Record post-anomaly frames live
-        cap = cv2.VideoCapture(0)
-        for _ in range(post_frames):
-            ret, frame = cap.read()
-            if not ret:
-                break
-            out.write(frame)
-
-        cap.release()
-        out.release()
-        return filename
+        return out, filename  # Return writer so more frames can be added
