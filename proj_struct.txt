@@ -13,14 +13,17 @@ EdgeGuard-Plus/
 │   ├── cnn_lstm_model.py           # Core model architecture
 │   └── saved_model/                # Exported TFLite/ONNX models
 │
-├── backend_api/                    # ☁️ FastAPI backend
-│   ├── main.py                     # Main FastAPI server
-│   ├── models.py                   # DB models/schema
-│   ├── routes.py                   # API routes
-│   ├── database.py                 # SQLite/MongoDB connection
-│   ├── mqtt_handler.py             # Handles MQTT message ingestion
-│   ├── websocket.py                # WebSocket server for dashboard
-│   └── utils/                      # Token validation, encryption, etc.
+├── backend_api/                # Node.js + Express + MongoDB
+│   ├── app.js                  # Entry point
+│   ├── routes/
+│   │   └── alerts.js
+│   ├── models/
+│   │   └── Alert.js
+│   ├── controllers/
+│   │   └── alertController.js
+│   ├── websocket.js
+│   ├── .env
+│   └── package.json
 │
 ├── dashboard_ui/                   # 💻 React frontend
 │   ├── public/

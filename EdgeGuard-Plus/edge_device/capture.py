@@ -3,6 +3,7 @@ import time
 from detect import MockAnomalyDetector
 from dvr import DVRBuffer
 from encrypt import MetadataEncryptor
+from sender import send_encrypted_alert
 
 def run_capture():
     cap = cv2.VideoCapture(0)
@@ -55,8 +56,19 @@ def run_capture():
                 }
 
                 encrypted = encryptor.encrypt(metadata)
-                print("🔐 Encrypted Metadata:")
-                print(encrypted)
+                # Send to backend
+                send_encrypted_alert(
+                    api_url="http://localhost:5000/api/alerts",  # change port/host if needed
+                    encrypted_data={
+                        "timestamp": metadata["timestamp"],
+                        "clip_path": metadata["clip_path"],
+                        "type": metadata["type"],
+                        "location": metadata["location"],
+                        "iv": encrypted["iv"],
+                        "ciphertext": encrypted["ciphertext"]
+                    }
+                )
+
             else:
                 print("❌ Clip save failed.")
 
