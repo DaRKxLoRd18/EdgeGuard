@@ -1,6 +1,6 @@
 # 🛡️ EdgeGuard++: Smart, Privacy-First, Full-Stack Anomaly Detection Platform for Edge Devices
 
-> Real-time, privacy-aware anomaly detection on edge devices with encrypted cloud sync, heatmaps, DVR-like event rewind, and a full-stack dashboard experience. Built collaboratively by a 3-member team.
+> A complete AI-powered, privacy-preserving anomaly detection system — featuring real-time video analysis, DVR-style event capture, AES-encrypted metadata, a Node.js + MongoDB backend, and a React-based dashboard.
 
 ---
 
@@ -11,25 +11,30 @@ Most security and monitoring systems **stream raw video to the cloud**, leading 
 - 🛑 High **bandwidth and cloud cost**
 - 🐢 Increased **latency**
 
-**EdgeGuard++** brings intelligence to the **edge**, detecting anomalies **locally**, encrypting sensitive metadata, and offering a rich **dashboard and analytics layer** — all without sending raw data to the cloud.
+**EdgeGuard++ solves this by:**
+- Performing AI inference on-device
+- Saving only anomalies (DVR-style)
+- Encrypting & sending metadata only
+- Storing events in a Node.js + MongoDB backend
+- Displaying via a React dashboard
 
 ---
 
 ## 🎯 Key Features
 
-| Category              | Feature                                                   |
-|-----------------------|-----------------------------------------------------------|
-| 🧠 AI on Edge         | Real-time anomaly detection with lightweight CNN+LSTM     |
-| 🔐 Privacy Engine     | AES-256 encryption, local processing, cloud opt-in        |
-| 📦 Mini-DVR           | Save only 5s before & after an anomaly (privacy-respecting) |
-| 🌍 Zone Detection     | Define zones + real-time heatmaps on the dashboard        |
-| 📊 Analytics          | Anomaly trends, daily stats, most-affected zones          |
-| 🛠️ Configurable       | Privacy control center (retention, sync toggle, opt-in FL) |
-| 🔄 Feedback Loop      | Users can confirm/correct detection for model retraining  |
-| 🌐 Multi-Device       | Manage multiple edge devices from a central dashboard     |
-| 📱 Mobile Companion   | (Optional) Push notifications for anomaly alerts          |
+| Category            | Feature                                                                 |
+|---------------------|-------------------------------------------------------------------------|
+| 🎥 Edge Capture     | Webcam or video file input with DVR buffering                           |
+| 🧠 Anomaly Detection| CNN + LSTM model for spatial-temporal pattern detection (real model)    |
+| 🔐 Privacy Engine   | AES-256 encryption for metadata                                          |
+| 🎞️ DVR System       | Saves 5s before and after each anomaly                                  |
+| 📡 Cloud Sync       | Sends encrypted alerts to Express.js API                                |
+| 🧮 Data Storage      | MongoDB for event logging                                               |
+| 📊 Dashboard (Coming)| Real-time alert list + playback + map zones (React)                    |
+| 🔁 Real-time Ready   | WebSocket support for live feed push (planned)                         |
 
 ---
+
 
 ## 👥 Target Users
 
@@ -43,39 +48,46 @@ Most security and monitoring systems **stream raw video to the cloud**, leading 
 
 ---
 
-## 🧑‍💻 Tech Stack
+## 🧰 Tech Stack
 
-| Layer              | Tech Used                                |
-|--------------------|-------------------------------------------|
-| Edge Device        | Python, OpenCV, TensorFlow Lite, AES      |
-| ML Model           | CNN + LSTM, Federated Learning (Flower)   |
-| Backend API        | FastAPI / Flask, SQLite / MongoDB         |
-| Dashboard Frontend | React.js, Mapbox, WebSocket, Chart.js     |
-| DevOps             | Docker, GitHub Actions, CI/CD, MQTT       |
+| Layer           | Stack/Tools Used                            |
+|------------------|---------------------------------------------|
+| 🧠 Edge Inference | Python, OpenCV, TensorFlow (CNN+LSTM), NumPy|
+| 📦 Metadata Sec. | PyCryptodome (AES-256)                      |
+| 🎞️ Video Buffer  | OpenCV + Deques (DVR logic)                 |
+| ☁️ Backend API   | Node.js, Express.js, dotenv                 |
+| 🗃️ Database       | MongoDB (local or Atlas)                   |
+| 📊 Frontend      | React.js (dashboard UI), Axios, Mapbox (TBD)|
+| 🧪 Model Training| TensorFlow, Keras                           |
+| 🛠 DevOps         | Nodemon, .env configs                      |
 
 ---
 
 ## 🔗 Architecture Overview
 
 ```text
-          [Edge Device A]         [Edge Device B]
-         ┌───────────────┐       ┌───────────────┐
-         │ Webcam/Input  │       │ Video File    │
-         │ Anomaly Model │       │ CNN+LSTM      │
-         │ DVR Buffer    │       │ AES Encrypt   │
-         └─────┬─────────┘       └─────┬─────────┘
-               │                          │
-               ▼                          ▼
-       [Encrypted Metadata & Clip]    [Encrypted Metadata]
-               │                          │
-               └───────────┬──────────────┘
-                           ▼
-                   🌩️ Cloud Backend API
-               (FastAPI + DB + MQTT Broker)
-                           │
-                           ▼
-                     📊 React Dashboard
-                   - Live map & feed
-                   - Zone editor
-                   - Analytics & replay
-                   - Privacy settings
+
+
+                [Edge Device]
+                ┌───────────────────────┐
+                │ - Webcam / Video Feed│
+                │ - CNN+LSTM Detector  │
+                │ - AES Encryptor      │
+                │ - DVR Saver (.avi)   │
+                └───────┬──────────────┘
+                        ▼
+                POST Encrypted Metadata (JSON)
+                        ▼
+                [Node.js + Express Backend]
+                ┌──────────────────────┐
+                │ - Save to MongoDB    │
+                │ - GET /api/alerts    │
+                │ - WebSocket Support  │
+                └───────┬──────────────┘
+                        ▼
+                [React.js Dashboard UI]
+                ┌──────────────────────┐
+                │ - Live alert feed    │
+                │ - Replay .avi clips  │
+                │ - Analytics & Zones  │
+                └──────────────────────┘
