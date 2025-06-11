@@ -1,0 +1,13 @@
+# Ignore preprocessed data files
+data/processed/
+__pycache__/
+Papers/
+EdgeGuard-Plus/backend_api
+EdgeGuard/dashboard_ui
+EdgeGuard/deployment
+EdgeGuard/docs
+EdgeGuard/edge_device
+EdgeGuard/federated_learning
+proj_struct.txt
+proj_use.md
+readme.md
