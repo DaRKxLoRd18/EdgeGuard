@@ -1,4 +1,4 @@
-<!-- # 🧠 EdgeGuard++ Model Training: Real-Time Context-Aware Anomaly Detector
+# 🧠 EdgeGuard++ Model Training: Real-Time Context-Aware Anomaly Detector
 
 This module focuses on building the **Tier-1 anomaly detection model** for EdgeGuard++ — a lightweight, high-accuracy, real-time model based on CNN + LSTM (or ConvLSTM2D), exportable to ONNX or TFLite and deployable on edge devices.
 
@@ -123,7 +123,7 @@ Sequence of frames is maintained and passed through the ONNX model to return ano
 
 ## 🙌 Author
 
-This module is part of the [EdgeGuard++] project -->
+This module is part of the [EdgeGuard++] project
 
 
 
