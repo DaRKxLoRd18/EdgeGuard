@@ -1,0 +1,85 @@
+2025-06-20 17:32:05.519879: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1750440725.764347      35 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1750440725.833721      35 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+I0000 00:00:1750440746.882051      35 gpu_device.cc:2022] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13942 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:00:04.0, compute capability: 7.5
+I0000 00:00:1750440746.882782      35 gpu_device.cc:2022] Created device /job:localhost/replica:0/task:0/device:GPU:1 with 13942 MB memory:  -> device: 1, name: Tesla T4, pci bus id: 0000:00:05.0, compute capability: 7.5
+Epoch 1/30
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1750440759.343192     100 service.cc:148] XLA service 0xc53abf0 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+I0000 00:00:1750440759.343979     100 service.cc:156]   StreamExecutor device (0): Tesla T4, Compute Capability 7.5
+I0000 00:00:1750440759.344000     100 service.cc:156]   StreamExecutor device (1): Tesla T4, Compute Capability 7.5
+I0000 00:00:1750440760.396066     100 cuda_dnn.cc:529] Loaded cuDNN version 90300
+I0000 00:00:1750440767.928153     100 device_compiler.h:188] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+119/119 ━━━━━━━━━━━━━━━━━━━━ 146s 1s/step - loss: 0.0174 - val_loss: 0.0320
+Epoch 2/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 125s 1s/step - loss: 0.0017 - val_loss: 0.0324
+Epoch 3/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 130s 1s/step - loss: 9.0832e-04 - val_loss: 0.0283
+Epoch 4/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 6.3739e-04 - val_loss: 0.0177
+Epoch 5/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 4.7606e-04 - val_loss: 0.0071
+Epoch 6/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 3.6910e-04 - val_loss: 0.0017
+Epoch 7/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 3.0187e-04 - val_loss: 3.9793e-04
+Epoch 8/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 2.5540e-04 - val_loss: 2.4415e-04
+Epoch 9/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 130s 1s/step - loss: 1.9790e-04 - val_loss: 2.0104e-04
+Epoch 10/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 130s 1s/step - loss: 1.7481e-04 - val_loss: 1.8613e-04
+Epoch 11/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 1.4783e-04 - val_loss: 1.8177e-04
+Epoch 12/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 130s 1s/step - loss: 1.2434e-04 - val_loss: 1.2665e-04
+Epoch 13/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 130s 1s/step - loss: 1.1722e-04 - val_loss: 1.1802e-04
+Epoch 14/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 1.0681e-04 - val_loss: 1.0542e-04
+Epoch 15/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 9.8592e-05 - val_loss: 8.8618e-05
+Epoch 16/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 9.0537e-05 - val_loss: 8.7808e-05
+Epoch 17/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 8.3925e-05 - val_loss: 1.0332e-04
+Epoch 18/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 130s 1s/step - loss: 7.8670e-05 - val_loss: 7.0334e-05
+Epoch 19/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 7.0496e-05 - val_loss: 6.3832e-05
+Epoch 20/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 130s 1s/step - loss: 6.8834e-05 - val_loss: 6.2774e-05
+Epoch 21/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 6.2545e-05 - val_loss: 5.0985e-05
+Epoch 22/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 6.1783e-05 - val_loss: 5.9790e-05
+Epoch 23/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 5.7560e-05 - val_loss: 4.9274e-05
+Epoch 24/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 5.9292e-05 - val_loss: 4.8932e-05
+Epoch 25/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 130s 1s/step - loss: 5.5076e-05 - val_loss: 5.5405e-05
+Epoch 26/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 5.4036e-05 - val_loss: 4.5785e-05
+Epoch 27/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 4.6515e-05 - val_loss: 3.7649e-05
+Epoch 28/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 4.7907e-05 - val_loss: 4.0863e-05
+Epoch 29/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 4.6324e-05 - val_loss: 4.7464e-05
+Epoch 30/30
+119/119 ━━━━━━━━━━━━━━━━━━━━ 129s 1s/step - loss: 4.7193e-05 - val_loss: 3.9623e-05
+15/15 ━━━━━━━━━━━━━━━━━━━━ 18s 894ms/step
+🔑 Threshold: 4.606309812515974e-05
+59/59 ━━━━━━━━━━━━━━━━━━━━ 38s 644ms/step
+🎯 AUC: 0.758
+📊 F1 Score: 0.8928
+              precision    recall  f1-score   support
+
+           0       0.04      0.01      0.02       281
+           1       0.85      0.95      0.89      1597
+
+    accuracy                           0.81      1878
+   macro avg       0.44      0.48      0.46      1878
+weighted avg       0.73      0.81      0.76      1878
