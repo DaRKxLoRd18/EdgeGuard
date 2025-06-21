@@ -6,8 +6,8 @@ from encrypt import MetadataEncryptor
 from sender import send_encrypted_alert
 
 def run_capture():
-    # cap = cv2.VideoCapture(r"C:\proj\test2.avi")
-    cap = cv2.VideoCapture(0)  # Use 0 for webcam or replace with video file path
+    cap = cv2.VideoCapture(r"C:\proj\test-videos\test.avi")
+    # cap = cv2.VideoCapture(0)  # Use 0 for webcam or replace with video file path
 
 
 
