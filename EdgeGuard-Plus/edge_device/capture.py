@@ -1,12 +1,16 @@
 import cv2
 import time
-from detect import MockAnomalyDetector
+from detect import ONNXAnomalyDetector  # ✅ Replaced Mock with ONNX
 from dvr import DVRBuffer
 from encrypt import MetadataEncryptor
 from sender import send_encrypted_alert
 
 def run_capture():
-    cap = cv2.VideoCapture(0)
+    # cap = cv2.VideoCapture(r"C:\proj\test2.avi")
+    cap = cv2.VideoCapture(0)  # Use 0 for webcam or replace with video file path
+
+
+
     if not cap.isOpened():
         print("❌ Error: Cannot open video source.")
         return
@@ -14,7 +18,13 @@ def run_capture():
     window_name = 'Edge Device Feed'
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
-    detector = MockAnomalyDetector(trigger_prob=0.01)
+    # ✅ Real anomaly detection using ONNX model
+    detector = ONNXAnomalyDetector(
+        model_path = r"C:\proj\saved_model\final_conv_lstm_ae.onnx",
+        threshold=0.01, # Adjust threshold as needed
+        confidence_margin=1.2
+    )
+    
     buffer = DVRBuffer(fps=30, buffer_seconds=5)
     encryptor = MetadataEncryptor()
 
@@ -32,13 +42,13 @@ def run_capture():
         # Add frame to DVR buffer
         buffer.add_frame(frame)
 
-        # Check for anomaly
+        # Check for anomaly using ONNX model
         if detector.is_anomaly(frame):
             print("🚨 Anomaly Detected! Saving clip...")
 
             writer, clip_path = buffer.save_clip_start()
             if writer and clip_path:
-                # Write 5 seconds of future frames
+                # Write 5 seconds of future frames (post-anomaly)
                 post_frames = 150
                 for _ in range(post_frames):
                     ret_post, post_frame = cap.read()
@@ -51,14 +61,15 @@ def run_capture():
                 metadata = {
                     "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
                     "clip_path": clip_path,
-                    "type": "mock_anomaly",
+                    "type": "reconstruction_anomaly",
                     "location": "Zone A"
                 }
 
                 encrypted = encryptor.encrypt(metadata)
+
                 # Send to backend
                 send_encrypted_alert(
-                    api_url="http://localhost:5000/api/alerts",  # change port/host if needed
+                    api_url="http://localhost:5000/api/alerts",
                     encrypted_data={
                         "timestamp": metadata["timestamp"],
                         "clip_path": metadata["clip_path"],
