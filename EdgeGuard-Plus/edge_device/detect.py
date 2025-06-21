@@ -4,7 +4,9 @@ import os
 from datetime import datetime
 
 class ONNXAnomalyDetector:
-    def __init__(self, model_path, threshold=0.02, confidence_margin=1.2):
+    def __init__(self, model_path, threshold=0.016, confidence_margin=1.2):
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"ONNX model not found at {model_path}")
         import onnxruntime as ort
         self.session = ort.InferenceSession(model_path, providers=['CPUExecutionProvider'])
         self.input_name = self.session.get_inputs()[0].name
@@ -14,7 +16,7 @@ class ONNXAnomalyDetector:
 
         # For output video saving
         self.video_writer = None
-        self.output_video_path = "data/output_annotated.avi"
+        self.output_video_path = os.path.join("data", "output_annotated.avi")
         os.makedirs("data", exist_ok=True)
 
         # Setup YOLOv8

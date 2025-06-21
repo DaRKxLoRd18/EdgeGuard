@@ -6,11 +6,13 @@ from encrypt import MetadataEncryptor
 from sender import send_encrypted_alert
 
 def run_capture():
-    # cap = cv2.VideoCapture(r"C:\proj\test-videos\test2.avi")
-    cap = cv2.VideoCapture(0)  # Use 0 for webcam or replace with video file path
+    cap = cv2.VideoCapture(r"C:\proj\test-videos\test.avi")
+    # cap = cv2.VideoCapture(0)  # Use 0 for webcam or replace with video file path
+    import os
+    os.makedirs("data/clips", exist_ok=True)
+    os.makedirs("data", exist_ok=True)
 
-
-
+    
     if not cap.isOpened():
         print("❌ Error: Cannot open video source.")
         return
@@ -19,9 +21,11 @@ def run_capture():
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
     # ✅ Real anomaly detection using ONNX model
+    import os
     detector = ONNXAnomalyDetector(
-        model_path = r"C:\proj\saved_model\final_conv_lstm_ae.onnx",
-        threshold=0.02, # Adjust threshold as needed
+        
+        model_path = os.path.join("saved_model", "final_conv_lstm_ae.onnx"),
+        threshold=0.016, # Adjust threshold as needed
         confidence_margin=1.2
     )
     
