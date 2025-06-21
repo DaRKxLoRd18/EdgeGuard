@@ -1,121 +1,80 @@
-- Created a mock model to detect anomaly.
-- Capture.py : captures live feed from webcam, detects anomaly saves +=5 sec of clip around anomaly. Encrypts data using AES-256 and sends to backend to save data in mongoDB(local)
-- created demo backend using nodejs(Just POST command) using chatgpt.
-- Saved complete metadata in MongoDB.
+# 🚨 EdgeGuard-Plus: Anomaly Detection Model Summary
 
-### Model work 
-- Downloaded and preprocessed raw data for model development and saved processed npy file in data folder. Check models/readme file for complete model development process.
-
-
-# Model :
-# 📊 EdgeGuard-Plus: Anomaly Detection Progress Log
-
-## ✅ Week 1: Foundation + Model Development
-
-### 🔹 Day 1: Dataset Setup + Preprocessing
-- Downloaded and explored **UCSD Ped2** dataset.
-- Used `preprocess.py` to generate `.npy` grayscale video tensors.
-- Frame shape standardized to `(12, 64, 64, 1)` using sliding windows.
-- Saved data and binary labels in: `data/processed/test/`.
-
-### 🔹 Day 2: Contextual Anomaly Understanding
-- Studied Section 2.2 of Chandola et al.
-- Designed labeling logic with collective + contextual anomaly support.
-- Decided binary score > threshold = anomaly.
-
-### 🔹 Day 3: ConvLSTM Model Prototyping
-- Built `ConvLSTM2D` autoencoder.
-- Input: `(batch, 12, 64, 64, 1)`, Output: reconstructed sequence.
-- Output is not classification, but anomaly **reconstruction error score**.
-
-### 🔹 Day 4: Training Framework
-- `train_model.py` uses:
-  - `Adam(1e-4)`, `EarlyStopping`, `ModelCheckpoint`.
-  - Binary F1, accuracy, AUC.
-- Data augmentation: horizontal flip, blur, etc.
-
-### 🔹 Day 5: Evaluation & Threshold Optimization
-- Created `get_threshold_anomaly_detection.py`.
-- Found best thresholds using:
-  - `f1_score`, `95th percentile`, and `roc_auc_score`.
-- Global threshold chosen: **~0.00004017** (Best F1 from all 12 videos).
-
-### 🔹 Day 6: Export to ONNX
-- Exported trained `.h5` model to `final_conv_lstm_ae.onnx`.
-- Validated ONNX model using `onnxruntime`.
-
-### 🔹 Day 7: DVR Pipeline Integration
-- Built `capture.py`:
-  - Reads from webcam or video.
-  - Uses `DVRBuffer` to save clips with 5s pre-buffer + post frames.
-  - Encrypts metadata with AES.
-  - Sends encrypted alert via `sender.py`.
+## 🎯 Objective
+Develop a robust **hybrid anomaly detection pipeline** for edge surveillance systems that:
+- Detects unusual activities in video feeds using temporal reconstruction error.
+- Integrates object detection for context-aware reasoning.
+- Supports encrypted alerting and DVR-like anomaly capture.
 
 ---
 
-## ✅ Week 2: Advanced Features + YOLO Integration
+## 🧠 Core Components
 
-### 🔹 Day 8: Real-time Deployment
-- Successfully ran live anomaly detection on UCSD test videos.
-- ONNX model achieved high F1 and AUC on evaluation.
+### 1. ConvLSTM Autoencoder (ONNX-based)
+- **Purpose**: Learn normal temporal motion patterns via sequence reconstruction.
+- **Input shape**: `(1, 12, 64, 64, 1)`
+- **Output**: Reconstructed sequence, MSE used as anomaly score.
+- **Exported to ONNX**: Converted from `.h5` to `.onnx` for efficient inference with `onnxruntime`.
 
-### 🔹 YOLOv8 Integration (Replacement for YOLOv5)
-- Switched to **Ultralytics YOLOv8** for lightweight object detection.
-- Automatically downloads `yolov8n.pt`.
-- Detects suspicious object classes: car, motorcycle, bus, truck.
-- Uses confidence threshold: `0.4`.
-
-### 🔹 Combined Detection Logic
-- `detect.py` now includes both:
-  - ConvLSTM score-based detection.
-  - YOLOv8 object detection logic.
-- If **either** detects anomaly → triggers DVR clip + alert.
-- All detections logged with:
-  - Class ID
-  - Confidence
-  - Bounding Box
-- Annotated output video saved as `data/output_annotated.avi`.
-
-### 🔹 YOLO Error Handling
-- Fails gracefully if Ultralytics not installed.
-- Keeps using ConvLSTM-only if YOLO fails or unavailable.
+### 2. YOLOv8 Integration (Ultralytics)
+- **Purpose**: Detect known suspicious object classes (vehicles/persons).
+- **Model**: `yolov8n.pt` (lightweight, real-time).
+- **Classes of interest**:
+  - Person (contextual filtering)
+  - Car, Motorcycle, Bus, Truck (hardcoded object anomalies)
+- **Used for**:
+  - Cross-checking anomalies
+  - Enabling context filtering (e.g., people in restricted hours)
 
 ---
 
-## 🔄 In Progress / Upcoming (Week 2)
+## 🧪 Anomaly Detection Logic
 
-- [ ] Day 9: Context engine (e.g., ignore known persons at night).
-- [ ] Day 10: Multi-class labeling (optional).
-- [ ] Day 11: Overlay scores on live stream (visual explainability).
-- [ ] Day 12: Quantize + prune to `.tflite`.
-- [ ] Day 13: Deploy on edge device (Jetson / Pi).
-- [ ] Day 14: Final demo video + README polish.
+### Hybrid Triggering Mechanism:
+- Anomaly is flagged if:
+  - 🔍 ConvLSTM Score > Threshold (`score > threshold * margin`)
+  - OR
+  - 🕵️ YOLO detects suspicious object (vehicles in restricted zones, or persons during restricted hours)
 
+### ConvLSTM Threshold:
+- F1-optimized threshold calculated over test data.
+- Example global threshold: `0.00004017`
+- Optional margin multiplier (`1.2`) added to adapt to runtime noise.
 
+---
 
-## 📦 Current Folder Structure
+## 🖼️ Visual Output + Logging
 
-```text
-EdgeGuard-Plus/
-├── edge_device/
-│ ├── capture.py
-│ ├── detect.py
-│ ├── dvr.py
-│ ├── encrypt.py
-│ ├── sender.py
-│ ├── yolov5/ (old, unused)
-│ └── yolov8 (via ultralytics)
-├── saved_model/
-│ └── final_conv_lstm_ae.onnx
-├── data/
-│ ├── clips/
-│ └── processed/
-└── till_now.md
+- Live feed displayed in window with:
+  - Overlayed anomaly score
+  - Contextual time window label (e.g., "Context Allowed: ✅")
+- Annotated video saved to:
+  - `data/output_annotated.avi`
 
-```
+---
 
-## 📌 Notes
-- 🔐 Alerts use AES-encrypted metadata.
-- 📡 Sending fails if backend API (localhost:5000) not running.
-- 🎯 Anomalies = high reconstruction error **or** YOLO-detected suspicious object.
+## 🎞️ DVR Buffer + Clip Saving
 
+- Rolling buffer stores last 5 seconds (150 frames at 30 FPS).
+- When anomaly is triggered:
+  - Buffer is flushed and 5 seconds of future frames are saved.
+  - Total ~10s clip saved as `clip_TIMESTAMP.avi` in `data/clips/`
+
+---
+
+## 🔐 Encrypted Metadata + Alerts
+
+- Metadata (clip path, timestamp, zone, etc.) is:
+  - AES-encrypted (256-bit CBC mode)
+  - IV and ciphertext base64-encoded
+- Sent to backend endpoint (e.g., `http://localhost:5000/api/alerts`) as JSON.
+- Example metadata:
+```json
+{
+  "timestamp": "2025-06-21 18:00:00",
+  "clip_path": "data/clips/clip_1718992800.avi",
+  "type": "reconstruction_anomaly",
+  "location": "Zone A",
+  "iv": "...",
+  "ciphertext": "..."
+}
