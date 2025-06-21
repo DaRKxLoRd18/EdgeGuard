@@ -1,0 +1,7 @@
+opencv-python
+numpy
+onnxruntime
+pycryptodome
+requests
+imageio
+ultralytics  # optional for YOLOv8 integration

@@ -1,18 +1,20 @@
 import cv2
 import time
-from detect import ONNXAnomalyDetector  # ✅ Replaced Mock with ONNX
+import os
+from detect import ONNXAnomalyDetector  # ✅ Real detector
 from dvr import DVRBuffer
 from encrypt import MetadataEncryptor
 from sender import send_encrypted_alert
+from gif_generator import save_gif_from_frames  # ✅ New
 
 def run_capture():
     cap = cv2.VideoCapture(r"C:\proj\test-videos\test.avi")
-    # cap = cv2.VideoCapture(0)  # Use 0 for webcam or replace with video file path
-    import os
-    os.makedirs("data/clips", exist_ok=True)
-    os.makedirs("data", exist_ok=True)
+    # cap = cv2.VideoCapture(0)
 
-    
+    os.makedirs("data", exist_ok=True)
+    os.makedirs("data/clips", exist_ok=True)
+    os.makedirs("data/previews", exist_ok=True)  # For GIFs
+
     if not cap.isOpened():
         print("❌ Error: Cannot open video source.")
         return
@@ -20,12 +22,9 @@ def run_capture():
     window_name = 'Edge Device Feed'
     cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
 
-    # ✅ Real anomaly detection using ONNX model
-    import os
     detector = ONNXAnomalyDetector(
-        
-        model_path = os.path.join("saved_model", "final_conv_lstm_ae.onnx"),
-        threshold=0.016, # Adjust threshold as needed
+        model_path=os.path.join("saved_model", "final_conv_lstm_ae.onnx"),
+        threshold=0.016,
         confidence_margin=1.2
     )
     
@@ -40,54 +39,58 @@ def run_capture():
             print("⚠️ Failed to grab frame. Exiting.")
             break
 
-        # Display frame
         cv2.imshow(window_name, frame)
-
-        # Add frame to DVR buffer
         buffer.add_frame(frame)
 
-        # Check for anomaly using ONNX model
-        if detector.is_anomaly(frame):
-            print("🚨 Anomaly Detected! Saving clip...")
+        # ✅ Get score, type, and flag
+        triggered, score, anomaly_type = detector.is_anomaly(frame)
 
+        if triggered:
+            print(f"🚨 {anomaly_type.upper()} detected! Score = {score:.8f}")
             writer, clip_path = buffer.save_clip_start()
+
             if writer and clip_path:
-                # Write 5 seconds of future frames (post-anomaly)
                 post_frames = 150
+                gif_frames = []
+
                 for _ in range(post_frames):
                     ret_post, post_frame = cap.read()
                     if not ret_post:
                         break
                     writer.write(post_frame)
+                    gif_frames.append(post_frame)
 
                 writer.release()
+
+                # ✅ Save GIF preview
+                gif_path = save_gif_from_frames(gif_frames)
 
                 metadata = {
                     "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
                     "clip_path": clip_path,
-                    "type": "reconstruction_anomaly",
+                    "gif_path": gif_path,
+                    "type": anomaly_type,
                     "location": "Zone A"
                 }
 
                 encrypted = encryptor.encrypt(metadata)
 
-                # Send to backend
+                # ✅ Send to backend
                 send_encrypted_alert(
                     api_url="http://localhost:5000/api/alerts",
                     encrypted_data={
                         "timestamp": metadata["timestamp"],
                         "clip_path": metadata["clip_path"],
+                        "gif_path": metadata["gif_path"],
                         "type": metadata["type"],
                         "location": metadata["location"],
                         "iv": encrypted["iv"],
                         "ciphertext": encrypted["ciphertext"]
                     }
                 )
-
             else:
                 print("❌ Clip save failed.")
 
-        # Exit conditions
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print("🛑 Stopping stream via 'q'.")
             break

@@ -35,6 +35,16 @@ class ONNXAnomalyDetector:
             print(f"⚠️ YOLO setup error: {e}")
             print("📝 Using ConvLSTM detection only")
 
+
+    def classify_anomaly_type(self, score, yolo_flag):
+        if yolo_flag:
+            return "vehicle_or_person"
+        elif score > self.threshold * self.margin:
+            return "motion_anomaly"
+        else:
+            return "unknown"
+
+
     def is_within_allowed_time(self):
         now = datetime.now()
         return 6 <= now.hour < 12  # 6:00 AM to 11:59 AM
@@ -80,23 +90,8 @@ class ONNXAnomalyDetector:
                 (width, height)
             )
 
-        # If YOLO detected object of interest
-        if suspicious:
-            cv2.putText(
-                annotated_frame,
-                "YOLO: Suspicious Object Detected",
-                (10, 30),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.7,
-                (0, 0, 255),
-                2
-            )
-            self.video_writer.write(annotated_frame)
-            print("🚨 YOLO detected suspicious object!")
-            return True
-
-        # Step 2: ConvLSTM-based detection
         try:
+            # Step 2: ConvLSTM-based detection
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             gray = cv2.resize(gray, (64, 64)).astype('float32') / 255.0
             gray = np.expand_dims(gray, axis=-1)  # (64, 64, 1)
@@ -104,7 +99,8 @@ class ONNXAnomalyDetector:
 
             if len(self.frame_buffer) < 12:
                 self.video_writer.write(annotated_frame)
-                return False
+                return False, 0.0, "warmup"
+
             if len(self.frame_buffer) > 12:
                 self.frame_buffer.pop(0)
 
@@ -113,24 +109,33 @@ class ONNXAnomalyDetector:
             pred = self.session.run(None, {self.input_name: sequence})[0]
             score = np.mean((sequence - pred) ** 2)
 
-            # Overlay score on frame
+            # Classify anomaly type
+            anomaly_type = self.classify_anomaly_type(score, yolo_flag=suspicious)
+            is_triggered = suspicious or (score > self.threshold * self.margin)
+
+            # Annotate frame
+            color = (0, 255, 0) if not is_triggered else (0, 0, 255)
+            label = f"{anomaly_type.upper()} - Score: {score:.6f}"
             cv2.putText(
                 annotated_frame,
-                f"ConvLSTM Score: {score:.6f}",
+                label,
                 (10, 30),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.7,
-                (0, 255, 0) if score <= self.threshold * self.margin else (0, 0, 255),
+                color,
                 2
             )
-
             self.video_writer.write(annotated_frame)
-            print(f"🔍 ConvLSTM Score: {score:.8f}")
 
-            return score > self.threshold * self.margin
+            if is_triggered:
+                print(f"🚨 Anomaly Detected ({anomaly_type}) - Score: {score:.8f}")
+            else:
+                print(f"🔍 Score: {score:.8f} - Normal")
+
+            return is_triggered, score, anomaly_type
 
         except Exception as e:
             print(f"❌ ConvLSTM error: {e}")
             self.video_writer.write(annotated_frame)
-            return False
+            return False, 0.0, "error"
 
