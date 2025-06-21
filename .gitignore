@@ -1,6 +1,7 @@
 # Ignore preprocessed data files
 data/processed/
 __pycache__/
+data/
 # Papers/
 # EdgeGuard-Plus/backend_api
 # EdgeGuard/dashboard_ui

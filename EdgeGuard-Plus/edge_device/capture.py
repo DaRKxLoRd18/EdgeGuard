@@ -6,8 +6,8 @@ from encrypt import MetadataEncryptor
 from sender import send_encrypted_alert
 
 def run_capture():
-    cap = cv2.VideoCapture(r"C:\proj\test-videos\test.avi")
-    # cap = cv2.VideoCapture(0)  # Use 0 for webcam or replace with video file path
+    # cap = cv2.VideoCapture(r"C:\proj\test-videos\test2.avi")
+    cap = cv2.VideoCapture(0)  # Use 0 for webcam or replace with video file path
 
 
 
@@ -21,7 +21,7 @@ def run_capture():
     # ✅ Real anomaly detection using ONNX model
     detector = ONNXAnomalyDetector(
         model_path = r"C:\proj\saved_model\final_conv_lstm_ae.onnx",
-        threshold=0.01, # Adjust threshold as needed
+        threshold=0.02, # Adjust threshold as needed
         confidence_margin=1.2
     )
     
