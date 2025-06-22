@@ -17,7 +17,7 @@ class ONNXAnomalyDetector:
         # For output video saving
         self.video_writer = None
         self.output_video_path = os.path.join("data", "output_annotated.avi")
-        os.makedirs("data", exist_ok=True)
+        # os.makedirs("data", exist_ok=True)
 
         # Setup YOLOv8
         self.yolo_available = False
