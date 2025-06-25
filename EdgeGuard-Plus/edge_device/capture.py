@@ -8,7 +8,7 @@ from sender import send_encrypted_alert
 from gif_generator import save_gif_from_frames  # ✅ New
 
 def run_capture():
-    cap = cv2.VideoCapture(r"C:\proj\test-videos\test.avi")
+    cap = cv2.VideoCapture(r"test-videos\test.avi")
     # cap = cv2.VideoCapture(0)
 
     os.makedirs("data", exist_ok=True)
