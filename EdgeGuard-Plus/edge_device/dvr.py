@@ -1,27 +1,35 @@
-import cv2
+# dvr.py
 import os
+import cv2
 from collections import deque
 import time
 
 class DVRBuffer:
     def __init__(self, fps=30, buffer_seconds=5):
-        self.buffer = deque(maxlen=fps * buffer_seconds)
         self.fps = fps
-        self.output_dir = "data/clips"
-        os.makedirs(self.output_dir, exist_ok=True)
+        self.buffer_size = fps * buffer_seconds
+        self.buffer = deque(maxlen=self.buffer_size)
 
     def add_frame(self, frame):
-        self.buffer.append(frame.copy())
+        self.buffer.append(frame)
 
     def save_clip_start(self):
-        filename = os.path.join(self.output_dir, f"clip_{int(time.time())}.avi")
-        if not self.buffer:
+        timestamp = int(time.time())
+        filename = f"data/clips/clip_{timestamp}.avi"
+        if len(self.buffer) == 0:
             return None, None
 
-        height, width, _ = self.buffer[0].shape
-        out = cv2.VideoWriter(filename, cv2.VideoWriter_fourcc(*'XVID'), self.fps, (width, height))
+        height, width = self.buffer[0].shape[:2]
+        writer = cv2.VideoWriter(
+            filename,
+            cv2.VideoWriter_fourcc(*'XVID'),
+            self.fps,
+            (width, height)
+        )
 
-        for frame in self.buffer:
-            out.write(frame)
+        # ✅ Safe copy to avoid RuntimeError from threading
+        safe_copy = list(self.buffer)
+        for frame in safe_copy:
+            writer.write(frame)
 
-        return out, filename  # Return writer so more frames can be added
+        return writer, filename
