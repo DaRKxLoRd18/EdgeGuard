@@ -1,13 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, getAllUsers, getUserById, getUserWithHistory, getUserByEmail  } = require('../controllers/userController');
+const {
+  registerUser,
+  loginUser,
+  getAllUsers,
+  getUserById,
+  getUserWithHistory,
+  getUserByEmail
+} = require('../controllers/userController');
 
-router.get('/by-email', getUserByEmail);
+const { authMiddleware } = require('../middlewares/authMiddleware');
 
 router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.get('/by-email', getUserByEmail);
 router.get('/', getAllUsers);
 router.get('/:id', getUserById);
-router.get('/:id/full', getUserWithHistory);
-
+router.get('/:id/full', authMiddleware, getUserWithHistory); // ✅ protected
 
 module.exports = router;

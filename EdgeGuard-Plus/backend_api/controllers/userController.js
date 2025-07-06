@@ -1,68 +1,53 @@
-// const User = require('../models/User');
-
-// exports.registerUser = async (req, res) => {
-//   try {
-//     const { name, email, location } = req.body;
-//     const user = await User.create({ name, email, location });
-//     res.status(201).json(user);
-//   } catch (error) {
-//     console.error("❌ Registration Error:", error.message);
-//     res.status(400).json({ message: 'Error registering user', error: error.message });
-//   }
-// };
-
-
-// exports.getUserByEmail = async (req, res) => {
-//   try {
-//     const { email } = req.query;
-//     const user = await User.findOne({ email });
-
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     res.json(user);
-//   } catch (error) {
-//     console.error("Error fetching user by email:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
-
-
-
-// exports.getAllUsers = async (req, res) => {
-//   const users = await User.find();
-//   res.json(users);
-// };
-
-// exports.getUserById = async (req, res) => {
-//   const user = await User.findById(req.params.id);
-//   res.json(user);
-// };
-
-// exports.getUserWithHistory = async (req, res) => {
-//   try {
-//     const user = await User.findById(req.params.id)
-//       .populate('alerts')
-//       .populate('anomalies');
-//     res.json(user);
-//   } catch (err) {
-//     res.status(404).json({ message: 'User not found', err });
-//   }
-// };
-
-
-
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, location } = req.body;
-    const user = await User.create({ name, email, location });
-    res.status(201).json(user);
+    const { name, email, password, location } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email, and password are required.' });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'User already exists with this email.' });
+    }
+
+    const user = await User.create({ name, email, password, location });
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    res.status(201).json(userResponse);
   } catch (error) {
     console.error("❌ Registration Error:", error.message);
     res.status(400).json({ message: 'Error registering user', error: error.message });
+  }
+};
+
+exports.loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).json({ message: "Email and password are required." });
+
+    const user = await User.findOne({ email }).select('+password');
+    if (!user || !(await user.comparePassword(password)))
+      return res.status(401).json({ message: "Invalid email or password" });
+
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET || 'default_secret',
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({ ...userResponse, token });
+  } catch (error) {
+    console.error("❌ Login Error:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -88,7 +73,6 @@ exports.getUserByEmail = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 
 exports.getAllUsers = async (req, res) => {
   try {

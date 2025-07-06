@@ -132,6 +132,6 @@ def run_capture(user_email, video_path=None):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    user_email = "gautammayank292@gmail.com"
+    user_email = "ketan@gmail.com"
     video_path = "test-videos/test.avi"  # Set to None to use webcam
     run_capture(user_email=user_email, video_path=video_path)
