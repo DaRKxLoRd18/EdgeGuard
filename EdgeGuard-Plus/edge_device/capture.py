@@ -142,5 +142,5 @@ def run_capture(user_email, video_path=None):
 
 if __name__ == "__main__":
     user_email = "ketan@gmail.com"
-    video_path = "test-videos/test.avi"  # Set to None to use webcam
+    video_path = r"D:\Security App\proj\test-videos\test.avi"  # Set to None to use webcam
     run_capture(user_email=user_email, video_path=video_path)
