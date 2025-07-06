@@ -10,7 +10,16 @@ from gif_generator import save_gif_from_frames
 
 def fetch_user_id(email):
     try:
-        response = requests.get("http://localhost:5000/api/users/by-email", params={"email": email})
+        # Load token from .env or file if using from frontend — adjust as needed
+        token = os.environ.get("AUTH_TOKEN", None)
+        headers = {"Authorization": f"Bearer {token}"} if token else {}
+
+        response = requests.get(
+            "http://localhost:5000/api/users/by-email",
+            params={"email": email},
+            headers=headers
+        )
+
         if response.status_code == 200:
             user = response.json()
             print(f"✅ User found: {user['_id']}")
