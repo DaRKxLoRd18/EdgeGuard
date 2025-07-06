@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { SiSpringsecurity } from "react-icons/si";
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom'; // ✅ Import navigate
+import { useNavigate } from 'react-router-dom';
 
 export default function AuthForm() {
-  const navigate = useNavigate(); // ✅ Initialize navigate
+  const navigate = useNavigate();
   const [mode, setMode] = useState("login");
   const [formData, setFormData] = useState({
     name: "",
@@ -67,13 +67,18 @@ export default function AuthForm() {
         });
 
         toast.success("✅ Login Successful!");
+
+        // ✅ FIXED: Store token and user object correctly
         if (res.data.token) {
           localStorage.setItem("authToken", res.data.token);
-          localStorage.setItem("user", JSON.stringify(res.data.user));
+          localStorage.setItem("user", JSON.stringify({
+            _id: res.data._id,
+            name: res.data.name,
+            email: res.data.email
+          }));
         }
 
-
-        navigate("/dashboard"); // ✅ Redirect after login
+        navigate("/dashboard");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "❌ Something went wrong");
@@ -182,8 +187,7 @@ export default function AuthForm() {
 
       <p className="text-center text-sm">
         {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
-        <button type="button" onClick={toggleMode}  
-          className="text-blue-600 underline">
+        <button type="button" onClick={toggleMode} className="text-blue-600 underline">
           {mode === "login" ? "Sign Up" : "Login"}
         </button>
       </p>

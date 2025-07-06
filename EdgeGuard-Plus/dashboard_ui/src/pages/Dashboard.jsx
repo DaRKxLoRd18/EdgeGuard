@@ -13,11 +13,23 @@ export default function Dashboard() {
     try {
       setError("");
       const user = JSON.parse(localStorage.getItem("user"));
-      const res = await axios.get("http://localhost:5000/api/alerts", {
-        params: { userId: user._id },
+      const token = localStorage.getItem("authToken");
+
+      if (!token || !user?._id) {
+        setError("Missing token or user session. Please login again.");
+        return;
+      }
+
+      const res = await axios.get(`http://localhost:5000/api/alerts/user/${user._id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      setAlerts(res.data);
+
+      setAlerts(res.data); // ✅ THIS LINE WAS MISSING
+
     } catch (err) {
+      console.error("❌ Error fetching alerts:", err.response || err.message);
       setError("Failed to fetch alerts");
     }
   };
@@ -26,8 +38,8 @@ export default function Dashboard() {
     fetchAlerts();
   }, []);
 
-  const todayCount = alerts.filter(alert =>
-    new Date(alert.timestamp).toDateString() === new Date().toDateString()
+  const todayCount = alerts.filter(
+    alert => new Date(alert.timestamp).toDateString() === new Date().toDateString()
   ).length;
 
   return (
@@ -36,8 +48,18 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         <StatCard title="Total Alerts" value={alerts.length} icon="📈" color="blue" />
-        <StatCard title="Motion Anomalies" value={alerts.filter(a => a.type === "motion").length} icon="⚠️" color="orange" />
-        <StatCard title="Vehicle/Person" value={alerts.filter(a => a.type === "object").length} icon="🧍" color="green" />
+        <StatCard
+          title="Motion Anomalies"
+          value={alerts.filter(a => a.type === "motion_anomaly").length} // ✅ FIXED FILTER VALUE
+          icon="⚠️"
+          color="orange"
+        />
+        <StatCard
+          title="Vehicle/Person"
+          value={alerts.filter(a => a.type === "vehicle_or_person").length} // ✅ FIXED FILTER VALUE
+          icon="🧍"
+          color="green"
+        />
         <StatCard title="Today" value={todayCount} icon="📅" color="purple" />
       </div>
 

@@ -37,6 +37,21 @@ exports.getAllAlerts = async (req, res) => {
 };
 
 exports.getAlertsByUser = async (req, res) => {
-  const alerts = await Alert.find({ userId: req.params.userId });
-  res.json(alerts);
+  try {
+    console.log("🔐 Token decoded userId:", req.user?.userId);
+    console.log("📥 Request param userId:", req.params.userId);
+
+    if (!req.user || req.user.userId !== req.params.userId) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const alerts = await Alert.find({ userId: req.params.userId });
+    console.log("✅ Alerts fetched:", alerts.length);
+    res.status(200).json(alerts);
+  } catch (err) {
+    console.error("❌ Error fetching user alerts:", err.message);
+    res.status(500).json({ message: "Failed to fetch alerts" });
+  }
 };
+
+
