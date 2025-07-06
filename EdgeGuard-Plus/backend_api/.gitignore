@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+EdgeGuard-Plus\backend_api\.env
 
 # testing
 /coverage
