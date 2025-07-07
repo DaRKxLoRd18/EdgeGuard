@@ -68,7 +68,6 @@ export default function AuthForm() {
 
         toast.success("✅ Login Successful!");
 
-        // ✅ FIXED: Store token and user object correctly
         if (res.data.token) {
           localStorage.setItem("authToken", res.data.token);
           localStorage.setItem("user", JSON.stringify({
