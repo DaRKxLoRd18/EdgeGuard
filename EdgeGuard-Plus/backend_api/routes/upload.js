@@ -28,11 +28,14 @@ router.post('/', upload.single('video'), (req, res) => {
     return res.status(400).json({ message: 'Missing email or file' });
   }
 
+  const capturePath = path.resolve(__dirname, 'D:\Security App\proj\EdgeGuard-Plus\edge_device\capture.py');
+
   const process = spawn('python', [
-    './edge_device/capture.py',
+    capturePath,
     '--email', email,
     '--stream', videoPath
   ]);
+
 
   process.stdout.on('data', data => console.log(`[STDOUT]: ${data}`));
   process.stderr.on('data', data => console.error(`[STDERR]: ${data}`));
