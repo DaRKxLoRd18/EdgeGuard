@@ -14,9 +14,9 @@ export default function Header({ onRefresh }) {
     <div className="flex justify-between items-center border-b pb-2">
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <span className="text-blue-600">🛡️ EdgeGuard++ Dashboard</span>
+          <span className="text-blue-600">🛡️ EdgeGuard Plus</span>
         </h1>
-        <p className="text-sm text-gray-500">Real-time anomaly detection and monitoring system</p>
+        <p className="text-sm text-gray-500"></p>
       </div>
 
       <div className="flex items-center gap-4">
