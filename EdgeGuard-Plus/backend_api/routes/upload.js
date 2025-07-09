@@ -6,11 +6,11 @@ const fs = require('fs');
 
 const router = express.Router();
 
-// Local uploads folder
+// Ensure uploads directory exists
 const uploadPath = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath);
 
-// Configure Multer
+// Setup Multer for file uploads
 const storage = multer.diskStorage({
   destination: uploadPath,
   filename: (req, file, cb) => {
@@ -20,30 +20,36 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// POST /api/upload
 router.post('/', upload.single('video'), (req, res) => {
   const { email } = req.body;
-  const videoPath = req.file.path;
+  const videoPath = req.file?.path;
 
-  if (!email || !req.file) {
-    return res.status(400).json({ message: 'Missing email or file' });
+  if (!email || !videoPath) {
+    return res.status(400).json({ message: 'Missing email or video file' });
   }
 
-  const capturePath = path.resolve(__dirname, 'D:\Security App\proj\EdgeGuard-Plus\edge_device\capture.py');
+  // ✅ FIX: Use path.resolve with proper escaping for Windows paths
+  const capturePath = path.resolve(__dirname, '../../edge_device/capture.py'); // Adjust if needed
 
-  const process = spawn('python', [
+  // ✅ OPTIONAL: Add "--headless" flag if running on server
+  const pythonProcess = spawn('python', [
     capturePath,
     '--email', email,
-    '--stream', videoPath
+    '--stream', videoPath,
+    '--headless'
   ]);
 
+  // Log output from Python process
+  pythonProcess.stdout.on('data', data => console.log(`[📤 Python stdout]: ${data}`));
+  pythonProcess.stderr.on('data', data => console.error(`[❌ Python stderr]: ${data}`));
+  pythonProcess.on('close', code => console.log(`🎬 capture.py exited with code ${code}`));
 
-  process.stdout.on('data', data => console.log(`[STDOUT]: ${data}`));
-  process.stderr.on('data', data => console.error(`[STDERR]: ${data}`));
-  process.on('close', code => {
-    console.log(`Process exited with code ${code}`);
+  // Respond immediately
+  res.status(200).json({
+    message: '📦 Video uploaded and processing started.',
+    file: path.basename(videoPath)
   });
-
-  res.json({ message: '🎥 Video uploaded & processing started.' });
 });
 
 module.exports = router;

@@ -2,15 +2,16 @@ import cv2
 import time
 import os
 import requests
+import argparse
 from detect import ONNXAnomalyDetector
 from dvr import DVRBuffer
 from encrypt import MetadataEncryptor
 from sender import send_encrypted_alert
 from gif_generator import save_gif_from_frames
 
+
 def fetch_user_id(email):
     try:
-        # Load token from .env or file if using from frontend — adjust as needed
         token = os.environ.get("AUTH_TOKEN", None)
         headers = {"Authorization": f"Bearer {token}"} if token else {}
 
@@ -22,21 +23,23 @@ def fetch_user_id(email):
 
         if response.status_code == 200:
             user = response.json()
-            print(f"✅ User found: {user['_id']}")
+            print(f"[INFO] User found: {user['_id']}")
+
             return user["_id"]
         else:
-            print("❌ User fetch failed:", response.json().get("message"))
+            print("User fetch failed:", response.json().get("message"))
             return None
     except Exception as e:
-        print(f"❌ Exception while fetching user ID: {e}")
+        print(f"Exception while fetching user ID: {e}")
         return None
+
 
 def handle_anomaly(user_id, buffer, cap, encryptor, anomaly_type, score):
     print(f"🚨 {anomaly_type.upper()} Detected! Score = {score:.8f}")
 
     writer, clip_path = buffer.save_clip_start()
     if not writer or not clip_path:
-        print("❌ Clip save failed.")
+        print("Clip save failed.")
         return
 
     gif_frames = []
@@ -49,10 +52,10 @@ def handle_anomaly(user_id, buffer, cap, encryptor, anomaly_type, score):
             writer.write(post_frame)
             gif_frames.append(post_frame)
         else:
-            print("⚠️ Skipped bad frame during post-capture.")
+            print("⚠ Skipped bad frame during post-capture.")
 
     writer.release()
-    time.sleep(0.1)  # Ensure FFmpeg flushes internal buffers
+    time.sleep(0.1)
 
     gif_path = save_gif_from_frames(gif_frames)
 
@@ -81,10 +84,11 @@ def handle_anomaly(user_id, buffer, cap, encryptor, anomaly_type, score):
         }
     )
 
-def run_capture(user_email, video_path=None):
+
+def run_capture(user_email, video_path=None, headless=False):
     user_id = fetch_user_id(user_email)
     if not user_id:
-        print("Exiting: Could not find user by email:", user_email)
+        print("❌ Could not find user by email:", user_email)
         return
 
     os.makedirs("data/clips", exist_ok=True)
@@ -98,10 +102,15 @@ def run_capture(user_email, video_path=None):
         return
 
     window_name = 'Edge Device Feed'
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    if not headless:
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(script_dir, ".."))
+    model_path = os.path.join(project_root, "saved_model", "final_conv_lstm_ae.onnx")
+
 
     detector = ONNXAnomalyDetector(
-        model_path=os.path.join("saved_model", "final_conv_lstm_ae.onnx"),
+        model_path=model_path,
         threshold=0.012,
         confidence_margin=1.2
     )
@@ -110,15 +119,17 @@ def run_capture(user_email, video_path=None):
 
     print("🎥 Streaming started. Press 'q' or close window to stop.")
 
-    cooldown_frames = 0  # Number of frames to skip detection after anomaly
+    cooldown_frames = 0
 
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("⚠️ Failed to grab frame. Exiting.")
+            print("⚠ End of video or stream. Exiting.")
             break
 
-        cv2.imshow(window_name, frame)
+        if not headless:
+            cv2.imshow(window_name, frame)
+
         buffer.add_frame(frame)
 
         if cooldown_frames > 0:
@@ -127,20 +138,27 @@ def run_capture(user_email, video_path=None):
 
         triggered, score, anomaly_type = detector.is_anomaly(frame)
         if triggered:
-            cooldown_frames = 120  # Skip detection for 2 seconds at 60 FPS
+            cooldown_frames = 120  # 2 seconds cooldown
             handle_anomaly(user_id, buffer, cap, encryptor, anomaly_type, score)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            print("🛑 Stopping stream via 'q'.")
-            break
-        if cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE) < 1:
-            print("🛑 Stopping stream via window close.")
-            break
+        if not headless:
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                print("🛑 Stream stopped via 'q'.")
+                break
+            if cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE) < 1:
+                print("🛑 Window closed.")
+                break
 
     cap.release()
-    cv2.destroyAllWindows()
+    if not headless:
+        cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
-    user_email = "ketan@gmail.com"
-    video_path = r"D:\Security App\proj\test-videos\test.avi"  # Set to None to use webcam
-    run_capture(user_email=user_email, video_path=video_path)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--email', required=True, help="User email to associate the event")
+    parser.add_argument('--stream', required=True, help="Path to video stream or file")
+    parser.add_argument('--headless', action='store_true', help="Run without GUI")
+    args = parser.parse_args()
+
+    run_capture(user_email=args.email, video_path=args.stream, headless=args.headless)
