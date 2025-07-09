@@ -20,7 +20,7 @@ export default function Header({ onRefresh }) {
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 text-green-600 font-medium">
+        <div className=" opacity-0 md:opacity-100 flex items-center gap-2 text-green-600 font-medium">
           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
           System Active
         </div>
@@ -34,7 +34,7 @@ export default function Header({ onRefresh }) {
 
         <button
           onClick={onRefresh}
-          className="text-blue-500 text-xl hover:rotate-180 transition-transform"
+          className="text-blue-500 text-xl hover:rotate-180 transition-transform  opacity-0 md:opacity-100"
           title="Refresh"
         >
           🔄

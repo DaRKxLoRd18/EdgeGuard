@@ -17,39 +17,52 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
 
-  const fetchAlerts = async () => {
-    try {
-      setLoading(true);
-      setError("");
+const fetchAlerts = async (reset = false) => {
+  try {
+    setLoading(true);
+    setError("");
 
-      const user = JSON.parse(localStorage.getItem("user"));
-      const token = localStorage.getItem("authToken");
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("authToken");
 
-      if (!token || !user?._id) {
-        setError("Missing token or user session. Please login again.");
-        return;
-      }
-
-      const res = await axios.get(`http://localhost:5000/api/alerts/user/${user._id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { page, limit: 10 }
-      });
-
-      if (res.data.length === 0) setHasMore(false);
-      else setAlerts(prev => [...prev, ...res.data]);
-
-    } catch (err) {
-      console.error("❌ Error fetching alerts:", err.response || err.message);
-      toast.error("Failed to fetch alerts");
-      setError("Failed to fetch alerts");
-    } finally {
-      setLoading(false);
+    if (!token || !user?._id) {
+      setError("Missing token or user session. Please login again.");
+      return;
     }
-  };
+
+    const currentPage = reset ? 1 : page;
+
+    const res = await axios.get(`http://localhost:5000/api/alerts/user/${user._id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      params: { page: currentPage, limit: 10 }
+    });
+
+    if (res.data.length === 0) {
+      setHasMore(false);
+    }
+
+    if (reset) {
+      setAlerts(res.data);
+    } else {
+      setAlerts(prev => [...prev, ...res.data]);
+    }
+  } catch (err) {
+    console.error("❌ Error fetching alerts:", err.response || err.message);
+    toast.error("Failed to fetch alerts");
+    setError("Failed to fetch alerts");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchAlerts();
   }, [page]);
+
+  const handleRefresh = () => {
+    fetchAlerts(true); // reset = true
+  };
 
   const todayCount = alerts.filter(
     alert => new Date(alert.timestamp).toDateString() === new Date().toDateString()
@@ -63,7 +76,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-4">
-      <Header onRefresh={() => { setAlerts([]); setPage(1); setHasMore(true); }} />
+      <Header onRefresh={handleRefresh} />
 
       <div className="flex gap-4 my-4 flex-wrap">
         <select value={filter} onChange={(e) => setFilter(e.target.value)} className="border p-2 rounded">
@@ -117,7 +130,7 @@ export default function Dashboard() {
         alerts={filteredAlerts}
         filter={filter}
         setFilter={setFilter}
-        onRefresh={fetchAlerts}
+        onRefresh={handleRefresh}
         error={error}
       />
 

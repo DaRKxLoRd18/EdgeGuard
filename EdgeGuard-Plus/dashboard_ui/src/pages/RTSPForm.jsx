@@ -29,7 +29,7 @@ export default function RTSPForm() {
 
   return (
     <div>
-        <div>
+        <div className=" ml-7 mr-7">
           <Header/>
         </div>
         <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 py-12">
