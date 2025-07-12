@@ -28,11 +28,11 @@ export default function RTSPForm() {
   };
 
   return (
-    <div>
-        <div className=" ml-7 mr-7">
+    <div className="min-h-screen px-6 py-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+        <div className="">
           <Header/>
         </div>
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 py-12">
+        <div className="min-h-screen  flex flex-col items-center justify-center px-4 py-12">
         <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl border border-blue-200">
             <h2 className="text-2xl font-semibold mb-4 text-center text-blue-600">
             📡 Start RTSP Stream

@@ -6,11 +6,13 @@ const fs = require('fs');
 
 const router = express.Router();
 
-// Ensure uploads directory exists
+// 🔧 Ensure uploads directory exists
 const uploadPath = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath);
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath);
+}
 
-// Setup Multer for file uploads
+// 📦 Configure Multer for file upload
 const storage = multer.diskStorage({
   destination: uploadPath,
   filename: (req, file, cb) => {
@@ -20,7 +22,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// POST /api/upload
+// 📤 POST route for file upload and trigger anomaly detection
 router.post('/', upload.single('video'), (req, res) => {
   const { email } = req.body;
   const videoPath = req.file?.path;
@@ -29,26 +31,45 @@ router.post('/', upload.single('video'), (req, res) => {
     return res.status(400).json({ message: 'Missing email or video file' });
   }
 
-  // ✅ FIX: Use path.resolve with proper escaping for Windows paths
-  const capturePath = path.resolve(__dirname, '../../edge_device/capture.py'); // Adjust if needed
+  // ✅ Resolve absolute path for capture.py (adjust if necessary)
+  const capturePath = path.resolve(__dirname, '../../edge_device/capture.py');
 
-  // ✅ OPTIONAL: Add "--headless" flag if running on server
+  // 🧠 Spawn Python process for anomaly detection
   const pythonProcess = spawn('python', [
     capturePath,
     '--email', email,
     '--stream', videoPath,
-    '--headless'
+    '--headless' // Optional: prevents window popups (OpenCV)
   ]);
 
-  // Log output from Python process
-  pythonProcess.stdout.on('data', data => console.log(`[📤 Python stdout]: ${data}`));
-  pythonProcess.stderr.on('data', data => console.error(`[❌ Python stderr]: ${data}`));
-  pythonProcess.on('close', code => console.log(`🎬 capture.py exited with code ${code}`));
+  // 🔍 Listen for stdout
+  pythonProcess.stdout.on('data', data => {
+    console.log(`[📤 Python stdout]: ${data}`);
+  });
 
-  // Respond immediately
-  res.status(200).json({
-    message: '📦 Video uploaded and processing started.',
-    file: path.basename(videoPath)
+  // ⚠️ Listen for stderr
+  pythonProcess.stderr.on('data', data => {
+    console.error(`[❌ Python stderr]: ${data}`);
+  });
+
+  // ✅ When Python process ends, send response
+  pythonProcess.on('close', code => {
+    console.log(`🎬 capture.py exited with code ${code}`);
+
+    if (code === 0) {
+      return res.status(200).json({
+        message: '✅ Video processed successfully.',
+        file: path.basename(videoPath),
+        status: 'success'
+      });
+    } else {
+      return res.status(500).json({
+        message: '❌ Video processing failed.',
+        file: path.basename(videoPath),
+        status: 'error',
+        code
+      });
+    }
   });
 });
 
