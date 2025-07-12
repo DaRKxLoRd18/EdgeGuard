@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BsSunFill, BsMoonFill } from "react-icons/bs";
+import ThemeTogleBtn from "../common/ThemeTogleBtn";
 
 export default function Header({ onRefresh }) {
   const navigate = useNavigate();
@@ -32,19 +33,13 @@ export default function Header({ onRefresh }) {
         </h1>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 justify-center">
         <div className="opacity-0 md:opacity-100 flex items-center gap-2 text-green-600 font-medium">
           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
           System Active
         </div>
 
-        <button
-          onClick={toggleTheme}
-          title="Toggle Theme"
-          className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:scale-110 transition"
-        >
-          {darkMode ? <BsSunFill className="text-yellow-400" /> : <BsMoonFill />}
-        </button>
+        <ThemeTogleBtn darkMode={darkMode} toggleTheme={toggleTheme} />
 
         <button
           onClick={handleLogout}

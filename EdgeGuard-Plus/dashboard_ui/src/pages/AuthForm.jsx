@@ -7,12 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export default function AuthForm() {
   const navigate = useNavigate();
   const [mode, setMode] = useState("login");
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    location: ""
-  });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "", location: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -49,7 +44,7 @@ export default function AuthForm() {
           return;
         }
 
-        const res = await axios.post("http://localhost:5000/api/users/register", {
+        await axios.post("http://localhost:5000/api/users/register", {
           name: formData.name,
           email: formData.email,
           password: formData.password,
@@ -89,15 +84,15 @@ export default function AuthForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 text-black border border-blue-500 p-10 rounded-lg w-[300px] sm:w-[350px]"
+      className="space-y-6 text-black dark:text-white border border-blue-500 p-10 rounded-lg w-[300px] sm:w-[350px] bg-white/60 dark:bg-gray-900/50 backdrop-blur-lg shadow-md"
     >
       <div className="flex flex-col justify-center items-center gap-3">
         <SiSpringsecurity size={35} />
         <div className="text-center">
-          <p className="text-2xl font-bold text-gray-700">
+          <p className="text-2xl font-bold text-gray-700 dark:text-white">
             {mode === "login" ? "Welcome Back" : "Create Account"}
           </p>
-          <p className="text-md text-black">
+          <p className="text-md text-black dark:text-gray-300">
             {mode === "login"
               ? "Sign in to access your dashboard"
               : "Register to get started"}
@@ -117,7 +112,7 @@ export default function AuthForm() {
               required
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg bg-white/20 placeholder-gray-600"
+              className="w-full px-4 py-2 border rounded-lg bg-white/20 dark:bg-gray-800 placeholder-gray-600"
               placeholder="Your name"
             />
           </div>
@@ -130,7 +125,7 @@ export default function AuthForm() {
               required
               value={formData.location}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg bg-white/20 placeholder-gray-600"
+              className="w-full px-4 py-2 border rounded-lg bg-white/20 dark:bg-gray-800 placeholder-gray-600"
               placeholder="Your location"
             />
           </div>
@@ -145,7 +140,7 @@ export default function AuthForm() {
           required
           value={formData.email}
           onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg bg-white/20 placeholder-gray-600"
+          className="w-full px-4 py-2 border rounded-lg bg-white/70 dark:bg-gray-800 dark:text-white placeholder-gray-600 dark:placeholder-gray-400"
           placeholder="you@example.com"
         />
       </div>
@@ -159,7 +154,7 @@ export default function AuthForm() {
             required
             value={formData.password}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg bg-white/20 placeholder-gray-600"
+            className="w-full px-4 py-2 border rounded-lg bg-white/70 dark:bg-gray-800 dark:text-white placeholder-gray-600 dark:placeholder-gray-400"
             placeholder="********"
           />
           <button
@@ -175,11 +170,10 @@ export default function AuthForm() {
       <button
         type="submit"
         disabled={loading}
-        className={`w-full py-2 px-4 text-white font-semibold rounded-lg transition ${
-          loading
+        className={`w-full py-2 px-4 text-white font-semibold rounded-lg shadow-md transition 
+          ${loading
             ? "bg-gray-400 cursor-not-allowed"
-            : "bg-gradient-to-r from-blue-500 to-fuchsia-500 hover:opacity-90"
-        }`}
+            : "bg-gradient-to-r from-purple-600 via-fuchsia-500 to-pink-500 hover:opacity-90"}`}
       >
         {loading ? "Processing..." : mode === "login" ? "Login" : "Sign Up"}
       </button>
