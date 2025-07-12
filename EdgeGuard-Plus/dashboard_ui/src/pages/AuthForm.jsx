@@ -84,7 +84,7 @@ export default function AuthForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 text-black dark:text-white border border-blue-500 p-10 rounded-lg w-[300px] sm:w-[350px] bg-white/60 dark:bg-gray-900/50 backdrop-blur-lg shadow-md"
+      className="space-y-6 text-black dark:text-white border border-blue-500 p-10 rounded-lg w-[300px] sm:w-[350px] bg-white/60 dark:bg-gray-900/50 backdrop-blur-lg shadow-md "
     >
       <div className="flex flex-col justify-center items-center gap-3">
         <SiSpringsecurity size={35} />

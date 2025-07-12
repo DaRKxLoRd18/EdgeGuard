@@ -26,7 +26,8 @@ class ONNXAnomalyDetector:
             self.yolo_available = True
             print("✅ Ultralytics YOLO detection enabled")
         except ImportError:
-            print("⚠️ Install YOLOv8: pip install ultralytics")
+            # print("⚠️ Install YOLOv8: pip install ultralytics")
+            print("\u26a0\ufe0f Install YOLOv8: pip install ultralytics")
         except Exception as e:
             print(f"⚠️ YOLO setup error: {e}")
 

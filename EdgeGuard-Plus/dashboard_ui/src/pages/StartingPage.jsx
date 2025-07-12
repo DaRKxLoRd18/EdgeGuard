@@ -26,7 +26,7 @@ const StartingPage = () => {
   return (
     <div className="relative min-h-screen bg-auth-gradient dark:bg-black transition-colors duration-300 flex justify-center items-center">
       {/* Floating Mac-style card */}
-      <div className="w-11/12 max-w-[1200px] animate-float bg-white/80 dark:bg-white/10 backdrop-blur-lg flex lg:flex-col rounded-xl shadow-2xl border border-white/30 transition-colors">
+      <div className="w-11/12 max-w-[1200px]  animate-float bg-white/80 dark:bg-white/10 backdrop-blur-lg flex lg:flex-col rounded-xl shadow-2xl border border-white/30 transition-colors h-[80%]">
         
         {/* Header with Mac buttons + Theme toggle */}
         <div className="flex items-center justify-between px-4 py-2 border-b-[1px]">
@@ -74,7 +74,7 @@ const StartingPage = () => {
               </div>
 
               {/* Right: AuthForm (no floating here) */}
-              <div>
+              <div >
                 <AuthForm />
               </div>
             </div>
