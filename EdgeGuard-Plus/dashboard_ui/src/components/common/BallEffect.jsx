@@ -65,11 +65,11 @@ const StyledWrapper = styled.div`
     animation-iteration-count: infinite;
     animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
     border-radius: 50%;
-    height: 60px;
+    height: 50px;
     position: relative;
     transform: translateY(-70px);
     transform-style: preserve-3d;
-    width: 60px;
+    width: 50px;
     z-index: 1;
   }
 

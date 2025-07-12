@@ -24,9 +24,9 @@ const StartingPage = () => {
   const toggleTheme = () => setDarkMode((prev) => !prev);
 
   return (
-    <div className="relative min-h-screen bg-auth-gradient dark:bg-black transition-colors duration-300 flex justify-center items-center">
+    <div className="relative min-h-screen bg-auth-gradient dark:bg-black transition-colors duration-300 flex justify-center items-center px-4 pt-8 pb-8">
       {/* Floating Mac-style card */}
-      <div className="w-11/12 max-w-[1200px]  animate-float bg-white/80 dark:bg-white/10 backdrop-blur-lg flex lg:flex-col rounded-xl shadow-2xl border border-white/30 transition-colors h-[80%]">
+      <div className="w-full max-w-[1100px] h-full animate-float bg-white/80 dark:bg-white/10 backdrop-blur-lg rounded-xl shadow-2xl border border-white/30 transition-colors flex flex-col">
         
         {/* Header with Mac buttons + Theme toggle */}
         <div className="flex items-center justify-between px-4 py-2 border-b-[1px]">
@@ -38,45 +38,49 @@ const StartingPage = () => {
           <ThemeTogleBtn darkMode={darkMode} toggleTheme={toggleTheme} />
         </div>
 
-        <div className="lg:min-h-[700px] w-full">
-          <div className="p-6">
-            <div className="flex flex-wrap lg:flex-nowrap justify-evenly items-center gap-8">
-              
-              {/* Left: Logo + Ball */}
-              <div className="flex flex-col justify-between h-full gap-y-24">
-                <div className="flex items-center justify-center text-center">
-                  <GlitchText
-                    speed={0.8}
-                    enableShadows={true}
-                    enableOnHover={false}
-                    className="text-3xl lg:text-5xl xl:text-6xl text-black dark:text-white"
-                  >
-                    EdgeGuard
-                  </GlitchText>
-                  <RotatingText
-                    texts={["+", "Plus"]}
-                    mainClassName="font-black text-2xl lg:text-4xl xl:text-5xl transition-all duration-500 overflow-hidden justify-center dark:text-white"
-                    staggerFrom="last"
-                    initial={{ y: "100%" }}
-                    animate={{ y: 0 }}
-                    exit={{ y: "-120%" }}
-                    staggerDuration={0.05}
-                    splitLevelClassName="overflow-hidden"
-                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
-                    rotationInterval={3000}
-                    splitBy="characters"
-                  />
-                </div>
+        {/* Centered Content */}
+        <div className="flex flex-1 justify-center items-center px-6 py-6">
+          <div className="flex flex-col lg:flex-row justify-center items-center gap-16 w-full">
+            
+            {/* Left: Title + BallEffect */}
+            <div className="flex flex-col items-center justify-center gap-6">
+            <div className="flex items-center gap-x-0 text-center">
+  <GlitchText
+    speed={0.8}
+    enableShadows={true}
+    enableOnHover={false}
+    className="text-4xl lg:text-5xl text-black dark:text-white font-black mr-1"
+  >
+    EdgeGuard
+  </GlitchText>
+  <div className="w-[110px]">
+    <RotatingText
+      texts={["+", "Plus"]}
+      mainClassName="font-black text-4xl lg:text-5xl text-blue-500 transition-all duration-500 overflow-hidden justify-center"
+      staggerFrom="last"
+      initial={{ y: "100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "-120%" }}
+      staggerDuration={0.05}
+      splitLevelClassName="overflow-hidden"
+      transition={{ type: "spring", damping: 30, stiffness: 400 }}
+      rotationInterval={3000}
+      splitBy="characters"
+    />
+  </div>
+</div>
 
-                <div className="flex justify-center">
-                  <BallEffect />
-                </div>
-              </div>
 
-              {/* Right: AuthForm (no floating here) */}
-              <div >
-                <AuthForm />
+
+              {/* Add space between title and ball */}
+              <div className="mt-12">
+                <BallEffect />
               </div>
+            </div>
+
+            {/* Right: Auth Form */}
+            <div className="w-full max-w-[350px]">
+              <AuthForm />
             </div>
           </div>
         </div>
