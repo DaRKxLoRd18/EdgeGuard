@@ -1,101 +1,99 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const BallEffect = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const dark = document.documentElement.classList.contains('dark');
+    setIsDark(dark);
+  }, []);
+
   return (
-    <StyledWrapper>
+    <StyledWrapper ballColor={isDark ? '#60A5F9' : '#2564EA'}>
       <div className="container">
-        <div className="ball">
-          <div className="inner">
-            <div className="line" />
-            <div className="line line--two" />
-            <div className="oval" />
-            <div className="oval oval--two" />
+        <div className="ball-container">
+          <div className="ball">
+            <div className="inner">
+              <div className="line" />
+              <div className="line line--two" />
+              <div className="oval" />
+              <div className="oval oval--two" />
+            </div>
           </div>
+          <div className="shadow" />
         </div>
-        <div className="shadow" />
       </div>
     </StyledWrapper>
   );
-}
+};
+
+export default BallEffect;
 
 const StyledWrapper = styled.div`
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ball-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 60px;
+  }
+
   @keyframes rotateBall {
-    0% {
-      transform: rotateY(0deg) rotateX(0deg) rotateZ(0deg);
-    }
-    50% {
-      transform: rotateY(360deg) rotateX(360deg) rotateZ(0deg);
-    }
-    100% {
-      transform: rotateY(720deg) rotateX(720deg) rotateZ(360deg);
-    }
+    0% { transform: rotateY(0deg) rotateX(0deg) rotateZ(0deg); }
+    50% { transform: rotateY(360deg) rotateX(360deg) rotateZ(0deg); }
+    100% { transform: rotateY(720deg) rotateX(720deg) rotateZ(360deg); }
   }
 
   @keyframes bounceBall {
-    0% {
-      transform: translateY(-70px) scale(1, 1);
-    }
-    15% {
-      transform: translateY(-56px) scale(1, 1);
-    }
-    45% {
-      transform: translateY(70px) scale(1, 1);
-    }
-    50% {
-      transform: translateY(73.5px) scale(1, 0.92);
-    }
-    55% {
-      transform: translateY(70px) scale(1, 0.95);
-    }
-    85% {
-      transform: translateY(-56px) scale(1, 1);
-    }
-    95% {
-      transform: translateY(-70px) scale(1, 1);
-    }
-    100% {
-      transform: translateY(-70px) scale(1, 1);
-    }
+    0% { transform: translateY(-70px) scale(1, 1); }
+    15% { transform: translateY(-56px) scale(1, 1); }
+    45% { transform: translateY(70px) scale(1, 1); }
+    50% { transform: translateY(73.5px) scale(1, 0.92); }
+    55% { transform: translateY(70px) scale(1, 0.95); }
+    85% { transform: translateY(-56px) scale(1, 1); }
+    95% { transform: translateY(-70px) scale(1, 1); }
+    100% { transform: translateY(-70px) scale(1, 1); }
   }
 
   .ball {
-    animation-name: bounceBall;
-    animation-duration: 1.2s;
-    animation-iteration-count: infinite;
-    animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    animation: bounceBall 1.2s infinite cubic-bezier(0.42, 0, 0.58, 1);
     border-radius: 50%;
     height: 50px;
+    width: 50px;
+    transform-style: preserve-3d;
     position: relative;
     transform: translateY(-70px);
-    transform-style: preserve-3d;
-    width: 50px;
     z-index: 1;
   }
 
   .ball::before {
-    background: radial-gradient(circle at 36px 20px, #ff8c16, #b35100);
+    background: radial-gradient(circle at 36px 20px, ${(props) => props.ballColor}, #1e40af);
     border: 2px solid #333333;
     border-radius: 50%;
     content: "";
     height: calc(100% + 6px);
-    left: -6px;
-    position: absolute;
-    top: -3px;
-    transform: translateZ(1vmin);
     width: calc(100% + 6px);
+    left: -3px;
+    top: -3px;
+    position: absolute;
+    transform: translateZ(1vmin);
   }
 
   .ball .inner {
-    animation-name: rotateBall;
-    animation-duration: 25s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
+    animation: rotateBall 25s linear infinite;
     border-radius: 50%;
     height: 100%;
+    width: 100%;
     position: absolute;
     transform-style: preserve-3d;
-    width: 100%;
   }
 
   .ball .line::before,
@@ -104,8 +102,8 @@ const StyledWrapper = styled.div`
     border-radius: 50%;
     content: "";
     height: 99%;
-    position: absolute;
     width: 99%;
+    position: absolute;
   }
 
   .ball .line::before {
@@ -130,8 +128,8 @@ const StyledWrapper = styled.div`
     border-radius: 50%;
     content: "";
     height: 99%;
-    position: absolute;
     width: 99%;
+    position: absolute;
   }
 
   .ball .oval::before {
@@ -151,39 +149,19 @@ const StyledWrapper = styled.div`
   }
 
   @keyframes bounceShadow {
-    0% {
-      filter: blur(3px);
-      opacity: 0.6;
-      transform: translateY(73px) scale(0.5, 0.5);
-    }
-    45% {
-      filter: blur(1px);
-      opacity: 0.9;
-      transform: translateY(73px) scale(1, 1);
-    }
-    55% {
-      filter: blur(1px);
-      opacity: 0.9;
-      transform: translateY(73px) scale(1, 1);
-    }
-    100% {
-      filter: blur(3px);
-      opacity: 0.6;
-      transform: translateY(73px) scale(0.5, 0.5);
-    }
+    0% { filter: blur(3px); opacity: 0.6; transform: translateY(73px) scale(0.5, 0.5); }
+    45% { filter: blur(1px); opacity: 0.9; transform: translateY(73px) scale(1, 1); }
+    55% { filter: blur(1px); opacity: 0.9; transform: translateY(73px) scale(1, 1); }
+    100% { filter: blur(3px); opacity: 0.6; transform: translateY(73px) scale(0.5, 0.5); }
   }
 
   .shadow {
-    animation-name: bounceShadow;
-    animation-duration: 1.2s;
-    animation-iteration-count: infinite;
-    animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    animation: bounceShadow 1.2s infinite cubic-bezier(0.42, 0, 0.58, 1);
     background: black;
-    filter: blur(2px);
     border-radius: 50%;
+    filter: blur(2px);
     height: 6px;
-    transform: translateY(73px);
     width: 54px;
-  }`;
-
-export default BallEffect;
+    align-self: center;
+  }
+`;

@@ -32,37 +32,42 @@ export default function RTSPForm() {
         <div className="">
           <Header/>
         </div>
-        <div className="min-h-screen  flex flex-col items-center justify-center px-4 py-12">
-        <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl border border-blue-200">
-            <h2 className="text-2xl font-semibold mb-4 text-center text-blue-600">
-            📡 Start RTSP Stream
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-                type="text"
-                placeholder="Enter RTSP stream URL"
-                value={rtspUrl}
-                onChange={(e) => setRtspUrl(e.target.value)}
-                required
-                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
-            >
-                {loading ? "Starting..." : "Start Stream"}
-            </button>
-            <button
-                type="button"
-                onClick={() => navigate("/dashboard")}
-                className="w-full mt-2 border border-gray-400 text-gray-700 py-2 rounded-md hover:bg-gray-100 transition"
-            >
-                ⬅️ Back to Dashboard
-            </button>
-            </form>
-        </div>
-    </div>
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-[#EADFD1] dark:bg-[#212A3B] transition-colors duration-300">
+  <div className="bg-[#FFF7EB] dark:bg-[#3C3E7D] shadow-2xl rounded-xl p-8 w-full max-w-xl border border-white/30 backdrop-blur-md transition-colors duration-300 animate-float">
+    
+    <h2 className="text-2xl font-black mb-4 text-center text-[#2564EA] dark:text-[#60A5F9]">
+      📡 Start RTSP Stream
+    </h2>
+
+    <form onSubmit={handleSubmit} className="space-y-4 w-full">
+      <input
+        type="text"
+        placeholder="Enter RTSP stream URL"
+        value={rtspUrl}
+        onChange={(e) => setRtspUrl(e.target.value)}
+        required
+        className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800 dark:text-white dark:bg-[#4D4F9F] dark:border-transparent transition-colors"
+      />
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+      >
+        {loading ? "Starting..." : "Start Stream"}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => navigate("/dashboard")}
+        className="w-full mt-2 border-2 border-gray-500 dark:border-gray-200 text-gray-800 dark:text-white py-2 rounded-md hover:bg-gray-100 dark:hover:bg-[#4D4F9F] transition"
+      >
+        ⬅️ Back to Dashboard
+      </button>
+    </form>
+  </div>
+</div>
+
     </div>
     
   );

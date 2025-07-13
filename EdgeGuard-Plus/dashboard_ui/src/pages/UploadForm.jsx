@@ -109,34 +109,39 @@ export default function UploadForm() {
           <Loader />
         </div>
       ) : (
-        <div className="w-full flex justify-center items-center min-h-screen">
-          <div className="p-6 max-w-xl mx-auto bg-white rounded shadow flex flex-col justify-center items-center">
-          <h2 className="text-2xl font-semibold mb-4 text-center text-blue-600">
-            Upload Video for Anomaly Detection
+        <div className="w-full flex justify-center items-center min-h-screen bg-[#EADFD1] dark:bg-[#212A3B] transition-colors duration-300">
+          <div className="p-6 max-w-xl mx-auto bg-[#FFF7EB] dark:bg-[#3C3E7D] rounded-xl shadow-2xl flex flex-col justify-center items-center animate-float backdrop-blur-md border border-white/30 transition-colors duration-300">
+            
+            <h2 className="text-2xl font-black mb-4 text-center text-[#2564EA] dark:text-[#60A5F9]">
+              Upload Video for Anomaly Detection
             </h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full items-center">
               <input
                 type="file"
                 accept="video/*"
                 onChange={(e) => setVideoFile(e.target.files[0])}
-                className="border p-2 rounded text-gray-800"
+                className="border p-2 rounded text-gray-800 dark:text-gray-100 dark:bg-[#4D4F9F] w-full"
               />
+
               <button
                 type="submit"
-                className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+                className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors"
               >
                 Upload & Process
               </button>
+
               <button
                 type="button"
                 onClick={() => navigate("/dashboard")}
-                className="0 text-black px-4 py-2 rounded border-2 "
+                className="text-black dark:text-white border-2 px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-[#4D4F9F] transition-colors"
               >
-                Back To Dashborad
+                Back To Dashboard
               </button>
             </form>
           </div>
         </div>
+
       )}
     </div>
   );

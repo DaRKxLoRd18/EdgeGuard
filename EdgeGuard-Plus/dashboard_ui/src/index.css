@@ -5,3 +5,24 @@
 body {
   @apply bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300;
 }
+
+/* 🌊 Wave Gradient Animation */
+@keyframes waveGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.bg-gradient-light {
+  background: linear-gradient(to right, #F1D9C1, #FFF7EB);
+}
+
+.bg-gradient-dark {
+  background: linear-gradient(to right, #2A2E6C, #3C3E7D);
+}
