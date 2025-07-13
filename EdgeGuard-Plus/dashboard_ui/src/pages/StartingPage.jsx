@@ -31,9 +31,9 @@ const StartingPage = () => {
         {/* Header with Mac buttons + Theme toggle */}
         <div className="flex items-center justify-between px-4 py-2 border-b-[1px]">
           <div className="flex gap-1">
-            <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-            <span className="w-3 h-3 bg-yellow-400 rounded-full"></span>
-            <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+            <span className="w-3 h-3 bg-red-500 rounded-full cursor-pointer"></span>
+            <span className="w-3 h-3 bg-yellow-400 rounded-full  cursor-pointer"></span>
+            <span className="w-3 h-3 bg-green-500 rounded-full cursor-pointer"></span>
           </div>
           <ThemeTogleBtn darkMode={darkMode} toggleTheme={toggleTheme} />
         </div>
