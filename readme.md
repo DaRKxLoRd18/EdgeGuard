@@ -96,7 +96,7 @@ pip install -r requirements.txt
 ## 🖼️ Screenshots
 
 ### 🔐 Login Page  
-![Login Page](assets/login.png)
+![Login Page](assets/login2.png)
 
 ---
 
